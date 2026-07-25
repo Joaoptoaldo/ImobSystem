@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="form-card" style="max-width: 440px;">
+        <div class="form-card-header text-center" style="border-bottom: none; padding-bottom: 0;">
+            <h4 class="form-card-title justify-content-center">
+                <i class="fas fa-lock"></i> Acessar Sistema
+            </h4>
+            <p class="form-card-subtitle" style="margin-left: 0;">Faça login para continuar.</p>
+        </div>
+        <div class="form-card-body">
+            <form method="post">
+                {% csrf_token %}
+                {% if form.errors %}
+                    <div class="alert alert-danger d-flex align-items-center gap-2 py-2" role="alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Usuário ou senha inválidos.</span>
+                    </div>
+                {% endif %}
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">
+                        <i class="fas fa-user me-1 text-muted"></i>Usuário
+                    </label>
+                    <input type="text" name="username" class="form-control" id="id_username" placeholder="Digite seu usuário" required>
+                </div>
+                <div class="mb-3">
+                    <label for="id_password" class="form-label">
+                        <i class="fas fa-key me-1 text-muted"></i>Senha
+                    </label>
+                    <input type="password" name="password" class="form-control" id="id_password" placeholder="Digite sua senha" required>
+                </div>
+                <div class="form-actions" style="border-top: none; padding-top: 0; margin-top: 16px;">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-sign-in-alt me-1"></i> Entrar
+                    </button>
+                </div>
+            </form>
+        </div>
+</div>
+{% endblock %}
