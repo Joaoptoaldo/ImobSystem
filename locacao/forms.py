@@ -14,10 +14,14 @@ class ClientForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)  
         for field_name, field in self.fields.items():   
-              field.widget.attrs['class'] = 'form-control'
+            field.widget.attrs['class'] = 'form-control'
+        
+        # placeholders
+        self.fields['name'].widget.attrs['placeholder'] = 'Digite o nome completo do cliente'
+        self.fields['email'].widget.attrs['placeholder'] = 'Digite o E-mail do cliente'
+        self.fields['phone'].widget.attrs['placeholder'] = 'Digite o telefone do cliente'
               
-
-def clean_email(self):
+    def clean_email(self):
         """
         função para validar se o e-mail já existe no banco de dados, caso exista, retorna um erro
         """
@@ -43,8 +47,13 @@ class ImmobileForm(forms.ModelForm):
                 field.widget.attrs['class'] = 'form-check-input'
             else:
                 field.widget.attrs['class'] = 'form-control'
+        
+        # Placeholders
+        self.fields['code'].widget.attrs['placeholder'] = 'Digite o código do imóvel'
+        self.fields['price'].widget.attrs['placeholder'] = 'Digite o valor do imóvel'
+        self.fields['address'].widget.attrs['placeholder'] = 'Digite o endereço completo do imóvel'
                 
-    def clean_imovel(self):
+    def clean_code(self):
         """
         função para validar se o código do imóvel já existe no banco de dados, caso exista, retorna um erro
         """
@@ -71,7 +80,7 @@ class RegisterLocationForm(forms.ModelForm):
         for field_name, field in self.fields.items():   
               field.widget.attrs['class'] = 'form-control'
     
-    def clean_date(self):
+    def clean(self):
         """
         função para validar se a data de início é menor que a data de fim, caso não seja, retorna um erro
         """
@@ -81,3 +90,4 @@ class RegisterLocationForm(forms.ModelForm):
         
         if dt_start and dt_end and dt_start >= dt_end:
             raise ValidationError('A data de início deve ser menor que a data de fim.')
+        return cleaned_data
