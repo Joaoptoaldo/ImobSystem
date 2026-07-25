@@ -18,17 +18,17 @@
         </div>
 
         <!-- Filter por Intervalo de data -->
-        <div class="col-auto">  
-            <form class="d-flex align-items-end" action="{% url 'reports' %}"> 
-                <div class="">
-                    <label for="">Inicio</label>
-                    <input name="dt_start" type="date" value="{{request.GET.dt_start}}" class="form-control me-2"> 
+        <div class="col-auto">
+            <form class="d-flex align-items-end gap-2" action="{% url 'reports' %}"> 
+                <div>
+                    <label for="">Início</label>
+                    <input name="dt_start" type="date" value="{{ request.GET.dt_start }}" class="form-control"> 
                 </div>
-                <div class="">
+                <div>
                     <label for="">Final</label>
-                    <input name="dt_end" type="date" value="{{request.GET.dt_end}}" class="form-control me-2"> 
+                    <input name="dt_end" type="date" value="{{ request.GET.dt_end }}" class="form-control"> 
                 </div>
-                <div class="">
+                <div>
                     <button class="btn btn-outline-dark" type="submit"><i class="fas fa-filter"></i></button> 
                 </div>
             </form> 
@@ -69,7 +69,7 @@
 
 
     <!-- Tabela com todas informações de Registro de Locação -->
-    <table class="table">
+    <table class="table-light table table-striped table-hover table-bordered align-middle">
         <thead>
             <tr>
                 <th scope="col">#</th>
