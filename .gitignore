@@ -6,3 +6,4 @@ venv
 .env.local
 .vscode
 db.sqlite3
+static/
