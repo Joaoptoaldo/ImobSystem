@@ -6,25 +6,79 @@
 
 {% block content %}
 <div class="container">
-    <div class="d-flex gap-4 mt-3"> 
-        
-        <form class="col-md-6" action="{% url 'immobile-create' %}" method="post" 
-            enctype="multipart/form-data" novalidate>
-            {% csrf_token %} 
-            <h3>Cadastrar Imóvel</h3>
-            {% for field in form %}
-            <div class="mt-3">
-                {{field.label}}
-                {{field}}
-            </div>
-            {% endfor %}
-            <div class="mt-3">
-                <label>Imagens do Imóvel</label>
-                <input type="file" name="immobile" class="form-control" multiple>
-            </div>
-            <input type="submit" class="btn btn-primary mt-3" value="Salvar">
-        </form>
+    <div class="form-card">
+        <div class="form-card-header">
+            <h4 class="form-card-title">
+                <i class="fas fa-home"></i> Cadastrar Imóvel
+            </h4>
+            <p class="form-card-subtitle">Registre um novo imóvel no sistema para disponibilizá-lo para locação.</p>
+        </div>
+        <div class="form-card-body">
+            <form action="{% url 'immobile-create' %}" method="post" 
+                enctype="multipart/form-data" novalidate>
+                {% csrf_token %} 
 
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="{{ form.code.id_for_label }}" class="form-label">{{ form.code.label }}</label>
+                        {{ form.code }}
+                        {% if form.code.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.code.errors %}
+                            <i class="fas fa-exclamation-circle"></i> {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.type_item.id_for_label }}" class="form-label">{{ form.type_item.label }}</label>
+                        {{ form.type_item }}
+                        {% if form.type_item.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.type_item.errors %}
+                            <i class="fas fa-exclamation-circle"></i> {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.price.id_for_label }}" class="form-label">{{ form.price.label }}</label>
+                        {{ form.price }}
+                        {% if form.price.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.price.errors %}
+                            <i class="fas fa-exclamation-circle"></i> {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-12">
+                        <label for="{{ form.address.id_for_label }}" class="form-label">{{ form.address.label }}</label>
+                        {{ form.address }}
+                        {% if form.address.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.address.errors %}
+                            <i class="fas fa-exclamation-circle"></i> {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-12">
+                        <label for="immobile-images" class="form-label">Imagens do Imóvel</label>
+                        <input type="file" name="immobile" id="immobile-images" class="form-control" multiple accept="image/*">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="fas fa-save me-1"></i> Salvar
+                    </button>
+                    <a href="{% url 'list-location' %}" class="btn btn-outline-secondary px-4">
+                        <i class="fas fa-times me-1"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}
