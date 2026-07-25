@@ -7,9 +7,9 @@ class Client(models.Model):
     """
     classe que registra uma tabela de clientes
     """
-    name = models.CharField(max_length=100)
-    email = models.EmailField(max_length=200, unique=True)
-    phone = models.CharField(max_length=15)
+    name = models.CharField('Nome', max_length=100)
+    email = models.EmailField('E-mail', max_length=200, unique=True)
+    phone = models.CharField('Telefone', max_length=15)
     
     def __str__(self):
         return "{} - {}".format(self.name, self.email)
@@ -33,11 +33,11 @@ class Immobile(models.Model):
     """
     classe que registra uma tabela de imóveis 
     """
-    code = models.CharField(max_length=100)
-    type_item = models.CharField(max_length=100, choices=TypeImmobile.choices)
-    address = models.TextField()
-    price = models.DecimalField(max_digits=10,decimal_places=2)
-    is_locate = models.BooleanField(default=False)
+    code = models.CharField('Código', max_length=100)
+    type_item = models.CharField('Tipo de Imóvel', max_length=100, choices=TypeImmobile.choices)
+    address = models.TextField('Endereço')
+    price = models.DecimalField('Valor', max_digits=10, decimal_places=2)
+    is_locate = models.BooleanField('Está Locado?', default=False)
 
     def __str__(self):
         return "{} - {}".format(self.code, self.type_item)
@@ -52,7 +52,7 @@ class ImmobileImage(models.Model):
     """
     classe que cadastra as imagens do imóvel
     """
-    image = models.ImageField('Images',upload_to='images')
+    image = models.ImageField('Imagens', upload_to='images')
     immobile = models.ForeignKey(Immobile, related_name='immobile_images', on_delete=models.CASCADE)
  
     def __str__(self):
@@ -63,11 +63,11 @@ class RegisterLocation(models.Model):
     """
     classe que registra as locações realizadas
     """
-    immobile = models.ForeignKey(Immobile, on_delete=models.CASCADE, related_name='reg_location')
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    dt_start = models.DateTimeField('Inicio')
+    immobile = models.ForeignKey(Immobile, on_delete=models.CASCADE, related_name='reg_location', verbose_name='Imóvel')
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='Cliente')
+    dt_start = models.DateTimeField('Início')
     dt_end = models.DateTimeField('Fim')
-    create_at = models.DateField(default=datetime.now, blank=True)
+    create_at = models.DateField('Criado em', default=datetime.now, blank=True)
     
     def __str__(self):
         return "{} - {}".format(self.client, self.immobile)
