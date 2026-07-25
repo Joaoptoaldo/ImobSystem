@@ -1,0 +1,25 @@
+{% extends 'base.html' %} 
+
+{% block title %}Cadastrar Cliente{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<div class="container"> 
+    <div class="d-flex gap-4 mt-3">
+        
+        <form class="col-md-4" action="{% url 'client-create' %}" method="post" novalidate>
+            {% csrf_token %}
+            <h3>Cadastrar Cliente</h3>
+            {% for field in form %}
+            <div class="mt-3">
+                {{field.label}}
+                {{field}}
+            </div>
+            {% endfor %}
+            <input type="submit" class="btn btn-primary mt-3" value="Salvar">
+        </form>
+        
+    </div> 
+</div>
+{% endblock %}
