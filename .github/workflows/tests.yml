@@ -26,6 +26,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Collect static files
+        env:
+          SECRET_KEY: 'fake-secret-key-for-ci-1234567890abcdef'
+          DEBUG: 'True'
+          ALLOWED_HOSTS: '.localhost'
+        run: python manage.py collectstatic --noinput
+
       - name: Run tests
         env:
           SECRET_KEY: 'fake-secret-key-for-ci-1234567890abcdef'

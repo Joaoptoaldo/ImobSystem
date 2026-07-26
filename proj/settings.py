@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
     'apps.apps.AppsConfig', 
     'base.apps.BaseConfig',
     'locacao.apps.LocacaoConfig',
@@ -161,10 +162,54 @@ USE_TZ = True
 
 STATIC_ROOT = os.path.join(BASE_DIR,'static')
 STATIC_URL = 'static/'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 MEDIA_URL = '/media/'
+
+
+# AWS S3 para uploads de arquivos (opcional — usado apenas se as credenciais estiverem definidas)
+# Se as variáveis AWS_STORAGE_BUCKET_NAME, AWS_ACCESS_KEY_ID e AWS_SECRET_ACCESS_KEY
+# estiverem presentes no ambiente, os uploads vão para o S3.
+# Caso contrário, usa o armazenamento local (FileSystemStorage).
+# Staticfiles backend: em desenvolvimento (DEBUG=True) usa o backend simples do Django,
+# que resolve {% static %} sem exigir collectstatic. Em produção (DEBUG=False) usa o
+# WhiteNoise com compressão/hash (exige collectstatic antes do deploy).
+if DEBUG:
+    _STATICFILES_BACKEND = "django.contrib.staticfiles.storage.StaticFilesStorage"
+else:
+    _STATICFILES_BACKEND = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+if os.getenv("AWS_STORAGE_BUCKET_NAME") and os.getenv("AWS_ACCESS_KEY_ID") and os.getenv("AWS_SECRET_ACCESS_KEY"):
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3.S3Storage",
+        },
+        "staticfiles": {
+            "BACKEND": _STATICFILES_BACKEND,
+        },
+    }
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+    AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "us-east-1")
+    AWS_DEFAULT_ACL = "public-read"
+    AWS_QUERYSTRING_AUTH = False
+    AWS_S3_CUSTOM_DOMAIN = os.getenv("AWS_S3_CUSTOM_DOMAIN")
+    if AWS_S3_CUSTOM_DOMAIN:
+        MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+    else:
+        MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
+else:
+    # Fallback para armazenamento local (desenvolvimento)
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": _STATICFILES_BACKEND,
+        },
+    }
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
