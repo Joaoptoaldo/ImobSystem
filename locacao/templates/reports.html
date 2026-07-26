@@ -6,64 +6,64 @@
 
 <div class="container"> 
 
-    <div class="row g-3 align-items-center m-3 bg-light p-3"> 
+<div class="row g-3 align-items-center m-3 bg-light p-3"> 
 
-        <!-- Pesquisar pelo nome ou e-mail do cliente -->
-        <div class="col-auto">  
-            <label>Nome do Cliente ou E-mail</label>
-            <form class="d-flex" action="{% url 'reports' %}">
-                <input name="client" type="search" class="form-control me-2" placeholder="Pesquisar por cliente..." aria-label="Search">
-                <button class="btn btn-success" type="submit"><i class="fas fa-search"></i></button>
-            </form> 
-        </div>
+        <form method="get" action="{% url 'reports' %}" class="row g-3 align-items-center">
 
-        <!-- Filter por Intervalo de data -->
-        <div class="col-auto">
-            <form class="d-flex align-items-end gap-2" action="{% url 'reports' %}"> 
-                <div>
-                    <label for="">Início</label>
-                    <input name="dt_start" type="date" value="{{ request.GET.dt_start }}" class="form-control"> 
-                </div>
-                <div>
-                    <label for="">Final</label>
-                    <input name="dt_end" type="date" value="{{ request.GET.dt_end }}" class="form-control"> 
-                </div>
-                <div>
-                    <button class="btn btn-outline-dark" type="submit"><i class="fas fa-filter"></i></button> 
-                </div>
-            </form> 
-        </div>
+            <!-- Pesquisar pelo nome ou e-mail do cliente -->
+            <div class="col-auto">  
+                <label>Nome do Cliente ou E-mail</label>
+                <div class="d-flex">
+                    <input name="client" type="search" class="form-control me-2" placeholder="Pesquisar por cliente..." aria-label="Search" value="{{ request.GET.client }}">
+                    <button class="btn btn-success" type="submit"><i class="fas fa-search"></i></button>
+                </div> 
+            </div>
+
+            <!-- Filter por Intervalo de data -->
+            <div class="col-auto">
+                <div class="d-flex align-items-end gap-2"> 
+                    <div>
+                        <label for="">Início</label>
+                        <input name="dt_start" type="date" value="{{ request.GET.dt_start }}" class="form-control"> 
+                    </div>
+                    <div>
+                        <label for="">Final</label>
+                        <input name="dt_end" type="date" value="{{ request.GET.dt_end }}" class="form-control"> 
+                    </div>
+                    <div>
+                        <button class="btn btn-outline-dark" type="submit"><i class="fas fa-filter"></i></button> 
+                    </div>
+                </div> 
+            </div>
 
 
-        <!-- Filtrar pelo status do imóvel se está locado ou não locado -->
-        <div class="col-auto">
-            <form action="{% url 'reports' %}">
+            <!-- Filtrar pelo status do imóvel se está locado ou não locado -->
+            <div class="col-auto">
                 <label>Status Locação</label>
                 <select name="is_locate" class="form-select" onchange="this.form.submit()">
                     <option></option> 
                     <option value="True" {% if request.GET.is_locate == 'True' %}selected{% endif %}>LOCADO</option>
                     <option value="False" {% if request.GET.is_locate == 'False' %}selected{% endif %}>NÃO LOCADO</option> 
                 </select>
-            </form>
-        </div>
+            </div>
 
-        <!-- Filter pelo tipo de imóvel -->
-        <div class="col-auto">
-            <form class="" action="{% url 'reports' %}">
-            <label>Tipo de Imóvel</label>
-                <select name="type_item" class="form-select" onchange="this.form.submit()">
-                    <option></option> 
-                    <option value="APARTAMENTO" {% if request.GET.type_item == 'APARTAMENTO' %}selected{% endif %}>APARTAMENTO</option>
-                    <option value="KITNET" {% if request.GET.type_item == 'KITNET' %}selected{% endif %}>KITNET</option>
-                    <option value="CASA" {% if request.GET.type_item == 'CASA' %}selected{% endif %}>CASA</option>
-                </select>
-            </form> 
-        </div>
+            <!-- Filter pelo tipo de imóvel -->
+            <div class="col-auto">
+                <label>Tipo de Imóvel</label>
+                <div class="d-flex gap-2">
+                    <select name="type_item" class="form-select" onchange="this.form.submit()">
+                        <option></option> 
+                        <option value="APARTAMENTO" {% if request.GET.type_item == 'APARTAMENTO' %}selected{% endif %}>APARTAMENTO</option>
+                        <option value="KITNET" {% if request.GET.type_item == 'KITNET' %}selected{% endif %}>KITNET</option>
+                        <option value="CASA" {% if request.GET.type_item == 'CASA' %}selected{% endif %}>CASA</option>
+                    </select>
+                    <!-- Resetar estado dos filtros -->
+                    <a class="btn btn-danger" href="{% url 'reports' %}"><i class="fas fa-window-close"></i></a>
+                </div>
+            </div>
+
+        </form>
     
-        <!-- Resetar estado dos filtros -->
-        <div class="col-auto"> 
-            <a class="btn btn-danger" href="{% url 'reports' %}"><i class="fas fa-window-close"></i></a>
-        </div>  
         
     </div>
 
@@ -97,9 +97,9 @@
 
                 <td scope="row">
                     {% if immobile.is_locate == True %}
-                    <i class="fas fa-check-circle fa-2x link-success"></i>
+                        <i class="fas fa-check-circle fa-2x link-success"></i>
                     {% else %}
-                    <i class="fas fa-minus-circle fa-2x link-danger"></i>
+                        <i class="fas fa-minus-circle fa-2x link-danger"></i>
                     {% endif %} 
                 </td>
 
@@ -107,6 +107,8 @@
             {% endfor %}
         </tbody>
     </table> 
+
+{% include 'pagination.html' with page=immobiles %}
 </div>
 
 {% endblock %}

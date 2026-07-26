@@ -67,8 +67,8 @@ class RegisterLocationForm(forms.ModelForm):
     """
     classe para cadastrar uma locação 
     """
-    dt_start = forms.DateTimeField(widget=forms.DateInput(format='%d-%m-%Y',attrs={'type': 'date',}))
-    dt_end = forms.DateTimeField(widget=forms.DateInput(format='%d-%m-%Y',attrs={'type': 'date',}))
+    dt_start = forms.DateField(widget=forms.DateInput(attrs={'type': 'date',}))
+    dt_end = forms.DateField(widget=forms.DateInput(attrs={'type': 'date',}))
 
     class Meta:
         model = RegisterLocation

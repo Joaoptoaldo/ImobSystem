@@ -1,6 +1,6 @@
 {% extends 'base.html' %} 
 
-{% block title %}Cadastrar Cliente{% endblock %}
+{% block title %}{% if is_update %}Editar{% else %}Cadastrar{% endif %} Cliente{% endblock %}
 
 {% load static %}
 
@@ -9,12 +9,12 @@
     <div class="form-card">
         <div class="form-card-header">
             <h4 class="form-card-title">
-                <i class="fas fa-user"></i> Cadastrar Cliente
+                <i class="fas fa-user"></i> {% if is_update %}Editar{% else %}Cadastrar{% endif %} Cliente
             </h4>
-            <p class="form-card-subtitle">Preencha os dados do cliente para cadastro no sistema.</p>
+            <p class="form-card-subtitle">{% if is_update %}Altere os dados do cliente no sistema.{% else %}Preencha os dados do cliente para cadastro no sistema.{% endif %}</p>
         </div>
         <div class="form-card-body">
-            <form action="{% url 'client-create' %}" method="post" novalidate>
+            <form action="{% if is_update %}{% url 'client-update' client.id %}{% else %}{% url 'client-create' %}{% endif %}" method="post" novalidate>
                 {% csrf_token %}
                 <div class="row g-3">
                     <div class="col-md-6">
@@ -53,9 +53,9 @@
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary px-4">
-                        <i class="fas fa-save me-1"></i> Salvar
+                        <i class="fas fa-save me-1"></i> {% if is_update %}Atualizar{% else %}Salvar{% endif %}
                     </button>
-                    <a href="{% url 'list-location' %}" class="btn btn-outline-secondary px-4">
+                    <a href="{% url 'list-client' %}" class="btn btn-outline-secondary px-4">
                         <i class="fas fa-times me-1"></i> Cancelar
                     </a>
                 </div>

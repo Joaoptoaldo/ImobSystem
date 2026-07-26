@@ -27,19 +27,40 @@
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Cadastrar
+                        Clientes
                     </a>
                     <ul class="dropdown-menu dropdown-menu-dark">
                         <li>
-                            <a class="dropdown-item" href="{% url 'client-create' %}">Cliente</a>
+                            <a class="dropdown-item" href="{% url 'list-client' %}">Listar</a>
                         </li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
                         <li>
-                            <a class="dropdown-item" href="{% url 'immobile-create' %}">Imóvel</a>
+                            <a class="dropdown-item" href="{% url 'client-create' %}">Cadastrar</a>
                         </li>
                     </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Imóveis
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'list-immobile' %}">Listar</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'immobile-create' %}">Cadastrar</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'list-locations' %}">Locações</a>
                 </li> 
                 {% endif %}
             </ul>

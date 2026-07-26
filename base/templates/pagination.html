@@ -1,0 +1,62 @@
+{% if page.has_other_pages %}
+
+<nav aria-label="Navegação de páginas">
+    <ul class="pagination justify-content-center mt-4">
+        {% if page.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page=1" aria-label="Primeira">
+                <span aria-hidden="true">&laquo;&laquo;</span>
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page.previous_page_number }}" aria-label="Anterior">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">&laquo;&laquo;</span>
+        </li>
+        <li class="page-item disabled">
+            <span class="page-link">&laquo;</span>
+        </li>
+        {% endif %}
+
+        {% for num in page.paginator.page_range %}
+            {% if page.number == num %}
+            <li class="page-item active" aria-current="page">
+                <span class="page-link">{{ num }}</span>
+            </li>
+            {% elif num > page.number|add:'-3' and num < page.number|add:'3' %}
+            <li class="page-item">
+                <a class="page-link" href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ num }}">{{ num }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page.next_page_number }}" aria-label="Próxima">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page.paginator.num_pages }}" aria-label="Última">
+                <span aria-hidden="true">&raquo;&raquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">&raquo;</span>
+        </li>
+        <li class="page-item disabled">
+            <span class="page-link">&raquo;&raquo;</span>
+        </li>
+        {% endif %}
+    </ul>
+    <p class="text-center text-muted small">
+        Página {{ page.number }} de {{ page.paginator.num_pages }} ({{ page.paginator.count }} registro{{ page.paginator.count|pluralize:"s" }})
+    </p>
+</nav>
+{% endif %}
+

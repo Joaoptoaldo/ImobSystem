@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Cadastrar Imóvel{% endblock %}
+{% block title %}{% if is_update %}Editar{% else %}Cadastrar{% endif %} Imóvel{% endblock %}
 
 {% load static %}
 
@@ -9,12 +9,12 @@
     <div class="form-card">
         <div class="form-card-header">
             <h4 class="form-card-title">
-                <i class="fas fa-home"></i> Cadastrar Imóvel
+                <i class="fas fa-home"></i> {% if is_update %}Editar{% else %}Cadastrar{% endif %} Imóvel
             </h4>
-            <p class="form-card-subtitle">Registre um novo imóvel no sistema para disponibilizá-lo para locação.</p>
+            <p class="form-card-subtitle">{% if is_update %}Altere os dados do imóvel no sistema.{% else %}Registre um novo imóvel no sistema para disponibilizá-lo para locação.{% endif %}</p>
         </div>
         <div class="form-card-body">
-            <form action="{% url 'immobile-create' %}" method="post" 
+            <form action="{% if is_update %}{% url 'immobile-update' immobile.id %}{% else %}{% url 'immobile-create' %}{% endif %}" method="post" 
                 enctype="multipart/form-data" novalidate>
                 {% csrf_token %} 
 
@@ -66,14 +66,22 @@
                     <div class="col-12">
                         <label for="immobile-images" class="form-label">Imagens do Imóvel</label>
                         <input type="file" name="immobile" id="immobile-images" class="form-control" multiple accept="image/*">
+                        {% if is_update and immobile.immobile_images.all %}
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                <i class="fas fa-image me-1"></i>
+                                {{ immobile.immobile_images.count }} imagem(ns) já cadastrada(s).
+                            </small>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
 
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary px-4">
-                        <i class="fas fa-save me-1"></i> Salvar
+                        <i class="fas fa-save me-1"></i> {% if is_update %}Atualizar{% else %}Salvar{% endif %}
                     </button>
-                    <a href="{% url 'list-location' %}" class="btn btn-outline-secondary px-4">
+                    <a href="{% url 'list-immobile' %}" class="btn btn-outline-secondary px-4">
                         <i class="fas fa-times me-1"></i> Cancelar
                     </a>
                 </div>
