@@ -100,7 +100,17 @@ Acesse:
 
 - http://127.0.0.1:8000/
 
-## 7. Criar um superusuário
+## 7. Coletar arquivos estáticos (apenas para produção)
+
+**Passo obrigatório antes do deploy**, já que em produção (`DEBUG=False`) o WhiteNoise usa o backend `CompressedManifestStaticFilesStorage`, que exige o manifesto de arquivos estáticos.
+
+```bash
+python manage.py collectstatic --noinput
+```
+
+Em desenvolvimento (`DEBUG=True`) o backend usado é o `StaticFilesStorage`, que resolve `{% static %}` diretamente sem precisar de manifesto — portanto não é necessário rodar `collectstatic` localmente para testes ou desenvolvimento.
+
+## 8. Criar um superusuário
 
 ```bash
 python manage.py createsuperuser
@@ -109,6 +119,36 @@ python manage.py createsuperuser
 Depois acesse:
 
 - http://127.0.0.1:8000/admin/
+
+---
+
+# Deploy
+
+## Release (comando executado antes do primeiro deploy)
+
+Em plataformas como Heroku, Render ou Railway, configure o **release command** (ou **release phase**) para executar as tarefas abaixo **antes** de iniciar os novos dynos/containers:
+
+```bash
+python manage.py collectstatic --noinput && python manage.py migrate
+```
+
+Isso garante que os arquivos estáticos estejam coletados (com manifesto atualizado) e as migrações aplicadas antes de a nova versão receber tráfego.
+
+## Processo web
+
+O `Procfile` na raiz do projeto define o comando do processo web:
+
+```
+web: gunicorn proj.wsgi --log-file -
+```
+
+## Runtime
+
+O arquivo `runtime.txt` na raiz define a versão do Python usada pela plataforma:
+
+```
+python-3.12.10
+```
 
 ---
 
