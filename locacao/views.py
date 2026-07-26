@@ -5,7 +5,7 @@ from django.db import transaction
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from locacao.forms import ClientForm, ImmobileForm, RegisterLocationForm
-from locacao.models import Immobile
+from locacao.models import Immobile, RegisterLocation
 from locacao.services import ClientService, ImmobileService, LocationService
 
 ITEMS_PER_PAGE = 20
@@ -195,8 +195,6 @@ def finish_location(request, id):
     POST: executa o encerramento e redireciona
     Retorna 404 se a locação não existir ou já estiver encerrada.
     """
-    from locacao.models import RegisterLocation
-
     location = get_object_or_404(
         RegisterLocation, id=id, dt_finished__isnull=True
     )

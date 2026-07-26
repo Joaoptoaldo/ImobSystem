@@ -39,6 +39,16 @@ if not SECRET_KEY:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False").lower() in {"1", "true", "yes", "on"} # ativa/desativa o modo de depuração via variável de ambiente
 
+# Configurações de segurança para produção
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
+SECURE_HSTS_PRELOAD = not DEBUG
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') if not DEBUG else None
+X_FRAME_OPTIONS = 'DENY'
+
 ALLOWED_HOSTS = [ # define os hosts permitidos através da variável de ambiente ALLOWED_HOSTS
     host.strip()
     for host in os.getenv("ALLOWED_HOSTS", "").split(",")
