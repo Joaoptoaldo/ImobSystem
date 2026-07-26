@@ -1,5 +1,25 @@
+import os
+
 from django.db import models
-from datetime import datetime 
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
+from datetime import datetime
+
+
+MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5MB
+
+
+def validate_image_size(value):
+    """
+    Validador customizado que limita o tamanho do arquivo de imagem a 5MB
+    """
+    if value.size > MAX_IMAGE_SIZE:
+        raise ValidationError(
+            f'A imagem não pode exceder 5MB. O arquivo enviado tem '
+            f'{value.size / (1024 * 1024):.1f}MB.'
+        )
 
 
 # Create your models here.
@@ -33,7 +53,7 @@ class Immobile(models.Model):
     """
     classe que registra uma tabela de imóveis 
     """
-    code = models.CharField('Código', max_length=100)
+    code = models.CharField('Código', max_length=100, unique=True)
     type_item = models.CharField('Tipo de Imóvel', max_length=100, choices=TypeImmobile.choices)
     address = models.TextField('Endereço')
     price = models.DecimalField('Valor', max_digits=10, decimal_places=2)
@@ -52,7 +72,17 @@ class ImmobileImage(models.Model):
     """
     classe que cadastra as imagens do imóvel
     """
-    image = models.ImageField('Imagens', upload_to='images')
+    image = models.ImageField(
+        'Imagens',
+        upload_to='images',
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=['jpg', 'jpeg', 'png', 'webp']
+            ),
+            validate_image_size,
+        ]
+    )
+    
     immobile = models.ForeignKey(Immobile, related_name='immobile_images', on_delete=models.CASCADE)
  
     def __str__(self):
@@ -65,9 +95,10 @@ class RegisterLocation(models.Model):
     """
     immobile = models.ForeignKey(Immobile, on_delete=models.CASCADE, related_name='reg_location', verbose_name='Imóvel')
     client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='Cliente')
-    dt_start = models.DateTimeField('Início')
-    dt_end = models.DateTimeField('Fim')
+    dt_start = models.DateField('Início')
+    dt_end = models.DateField('Fim')
     create_at = models.DateField('Criado em', default=datetime.now, blank=True)
+    dt_finished = models.DateTimeField('Finalizado em', null=True, blank=True)
     
     def __str__(self):
         return "{} - {}".format(self.client, self.immobile)
@@ -76,4 +107,13 @@ class RegisterLocation(models.Model):
         verbose_name = 'Registrar Locação'
         verbose_name_plural = 'Registrar Locação'
         ordering = ['-id']
-        
+
+
+@receiver(post_delete, sender=ImmobileImage)
+def delete_immobile_image_file(sender, instance, **kwargs):
+    """
+    Apaga o arquivo físico da imagem quando um registro ImmobileImage
+    é excluído (seja via service, admin ou qualquer outro caminho).
+    """
+    if instance.image:
+        instance.image.delete(save=False)

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from locacao import models
+from locacao.forms import ImmobileForm
 
 # Register your models here.
 admin.site.register(models.Client) 
@@ -16,6 +17,7 @@ class ImmobileAdmin(admin.ModelAdmin):
     """
     classe que define o comportamento do admin para o modelo Immobile
     """
+    form = ImmobileForm
     inlines = [ImmobileImageInlineAdmin]
 
 

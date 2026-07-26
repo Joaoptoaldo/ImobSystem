@@ -2,8 +2,10 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from .models import Client, Immobile, RegisterLocation
 from .forms import ClientForm, ImmobileForm, RegisterLocationForm
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from django.contrib.auth.models import User
+from django.utils import timezone
+
 
 # Create your tests here.
 class AuthRedirectTest(TestCase):
@@ -54,7 +56,7 @@ class FormValidationTest(TestCase):
         testa que o RegisterLocationForm gera um erro de validação se a data de início for posterior à data de término
         """
         client = Client.objects.create(name='Test User', email='test@test.com', phone='123456789')
-        dt_start = datetime.now()
+        dt_start = date.today()
         dt_end = dt_start - timedelta(days=1)
         form_data = {
             'client': client.pk,
@@ -86,14 +88,14 @@ class ReportsViewTest(TestCase):
         self.location1 = RegisterLocation.objects.create(
             client=self.client1,
             immobile=self.immobile1,
-            dt_start=datetime.now() - timedelta(days=10),
-            dt_end=datetime.now() + timedelta(days=20),
+            dt_start=date.today() - timedelta(days=10),
+            dt_end=date.today() + timedelta(days=20),
         )
         self.location2 = RegisterLocation.objects.create(
             client=self.client2,
             immobile=self.immobile2,
-            dt_start=datetime.now() - timedelta(days=5),
-            dt_end=datetime.now() + timedelta(days=25),
+            dt_start=date.today() - timedelta(days=5),
+            dt_end=date.today() + timedelta(days=25),
         )
 
     def test_reports_filter_bug(self):
@@ -120,16 +122,16 @@ class ReportsViewFixTest(TestCase):
         self.location1 = RegisterLocation.objects.create(
             client=self.client1,
             immobile=self.immobile1,
-            dt_start=datetime(2025, 1, 1),
-            dt_end=datetime(2025, 1, 31),
+            dt_start=date(2025, 1, 1),
+            dt_end=date(2025, 1, 31),
             create_at=datetime(2025, 1, 15).date()
         )
         # Location 2: Client 2, created on 2025-03-15
         self.location2 = RegisterLocation.objects.create(
             client=self.client2,
             immobile=self.immobile1,
-            dt_start=datetime(2025, 3, 1),
-            dt_end=datetime(2025, 3, 31),
+            dt_start=date(2025, 3, 1),
+            dt_end=date(2025, 3, 31),
             create_at=datetime(2025, 3, 15).date()
         )
 
@@ -160,8 +162,8 @@ class FormLocationViewTest(TestCase):
         """
         form_data = {
             'client': self.client_renter.pk,
-            'dt_start': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'dt_end': (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S'),
+            'dt_start': date.today().strftime('%Y-%m-%d'),
+            'dt_end': (date.today() + timedelta(days=30)).strftime('%Y-%m-%d'),
         }
         response = self.client.post(reverse('location-create', args=[self.immobile_available.pk]), data=form_data)
         self.assertRedirects(response, reverse('list-location'))
@@ -176,3 +178,49 @@ class FormLocationViewTest(TestCase):
         response = self.client.get(reverse('location-create', args=[self.immobile_located.pk]))
         self.assertEqual(response.status_code, 404)
 
+
+class FinishLocationViewTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='password')
+        self.client.login(username='testuser', password='password')
+        self.client_renter = Client.objects.create(name='Renter', email='renter@test.com', phone='333')
+        self.immobile = Immobile.objects.create(code='FIN01', type_item='CASA', address='To Finish', price=500, is_locate=True)
+        self.location = RegisterLocation.objects.create(
+            client=self.client_renter,
+            immobile=self.immobile,
+            dt_start=date.today() - timedelta(days=30),
+            dt_end=date.today() + timedelta(days=30),
+        )
+
+    def test_finish_location_get_returns_200(self):
+        """
+        testa que o GET da view de encerrar locação retorna 200 e renderiza o template de confirmação
+        """
+        response = self.client.get(reverse('location-finish', args=[self.location.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'confirm_finish_location.html')
+
+    def test_finish_location_post_success(self):
+        """
+        testa o POST bem-sucedido: redireciona, immobile.is_locate=False e dt_finished preenchido
+        """
+        response = self.client.post(reverse('location-finish', args=[self.location.pk]))
+        self.assertRedirects(response, reverse('list-locations'))
+
+        self.immobile.refresh_from_db()
+        self.assertFalse(self.immobile.is_locate)
+
+        self.location.refresh_from_db()
+        self.assertIsNotNone(self.location.dt_finished)
+
+    def test_finish_already_finished_location_returns_404(self):
+        """
+        testa que tentar encerrar uma locação já encerrada retorna 404
+        """
+        self.client.post(reverse('location-finish', args=[self.location.pk]))
+
+        response = self.client.post(reverse('location-finish', args=[self.location.pk]))
+        self.assertEqual(response.status_code, 404)
+
+        response_get = self.client.get(reverse('location-finish', args=[self.location.pk]))
+        self.assertEqual(response_get.status_code, 404)
