@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Excluir Cliente{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="form-card" style="max-width: 500px;">
+        <div class="form-card-header text-center" style="border-bottom: none; padding-bottom: 0;">
+            <h4 class="form-card-title justify-content-center text-danger">
+                <i class="fas fa-exclamation-triangle"></i> Excluir Cliente
+            </h4>
+            <p class="form-card-subtitle" style="margin-left: 0;">Tem certeza que deseja excluir este cliente?</p>
+        </div>
+        <div class="form-card-body text-center">
+            <div class="mb-4">
+                <i class="fas fa-user-circle fa-4x text-muted mb-3"></i>
+                <h5 class="fw-bold">{{ client.name }}</h5>
+                <p class="text-muted mb-1"><i class="fas fa-envelope me-1"></i> {{ client.email }}</p>
+                <p class="text-muted"><i class="fas fa-phone me-1"></i> {{ client.phone }}</p>
+            </div>
+
+            <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                <i class="fas fa-info-circle"></i>
+                <span>Esta ação não pode ser desfeita.</span>
+            </div>
+
+            <form method="post" class="form-actions justify-content-center" style="border-top: none; padding-top: 0;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger px-4">
+                    <i class="fas fa-trash me-1"></i> Sim, Excluir
+                </button>
+                <a href="{% url 'list-client' %}" class="btn btn-outline-secondary px-4">
+                    <i class="fas fa-times me-1"></i> Cancelar
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

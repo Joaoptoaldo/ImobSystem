@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Encerrar Locação{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="form-card" style="max-width: 500px;">
+        <div class="form-card-header text-center" style="border-bottom: none; padding-bottom: 0;">
+            <h4 class="form-card-title justify-content-center text-warning">
+                <i class="fas fa-flag-checkered"></i> Encerrar Locação
+            </h4>
+            <p class="form-card-subtitle" style="margin-left: 0;">Tem certeza que deseja encerrar esta locação?</p>
+        </div>
+        <div class="form-card-body text-center">
+            <div class="mb-4">
+                <i class="fas fa-file-signature fa-4x text-muted mb-3"></i>
+                <h5 class="fw-bold">{{ location.immobile.code }}</h5>
+                <p class="text-muted mb-1">
+                    <i class="fas fa-user me-1"></i> {{ location.client.name }}
+                </p>
+                <p class="text-muted mb-1">
+                    <i class="fas fa-tag me-1"></i> {{ location.immobile.type_item }}
+                </p>
+                <p class="text-muted mb-1">
+                    <i class="fas fa-calendar-alt me-1"></i>
+                    {{ location.dt_start|date:"d/m/Y" }} — {{ location.dt_end|date:"d/m/Y" }}
+                </p>
+            </div>
+
+            <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                <i class="fas fa-info-circle"></i>
+                <span>O imóvel será marcado como disponível para novas locações.</span>
+            </div>
+
+            <form method="post" class="form-actions justify-content-center" style="border-top: none; padding-top: 0;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success px-4">
+                    <i class="fas fa-check me-1"></i> Sim, Encerrar
+                </button>
+                <a href="{% url 'list-locations' %}" class="btn btn-outline-secondary px-4">
+                    <i class="fas fa-times me-1"></i> Cancelar
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

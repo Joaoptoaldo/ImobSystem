@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Locações{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold mb-0">
+            <i class="fas fa-file-signature text-primary me-2"></i> Locações Registradas
+        </h4>
+    </div>
+
+    {% if locations %}
+    <div class="table-responsive">
+        <table class="table table-light table-striped table-hover table-bordered align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Cliente</th>
+                    <th scope="col">Imóvel</th>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Início</th>
+                    <th scope="col">Término</th>
+                    <th scope="col">Cadastrado em</th>
+                    <th scope="col">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for location in locations %}
+                <tr>
+                    <td scope="row">{{ location.id }}</td>
+                    <td>
+                        <i class="fas fa-user text-muted me-1"></i>
+                        {{ location.client.name }}
+                        <br>
+                        <small class="text-muted">{{ location.client.email }}</small>
+                    </td>
+                    <td>
+                        <strong>{{ location.immobile.code }}</strong>
+                    </td>
+                    <td>
+                        <span class="badge bg-info">{{ location.immobile.type_item }}</span>
+                    </td>
+                    <td>{{ location.dt_start|date:"d/m/Y" }}</td>
+                    <td>{{ location.dt_end|date:"d/m/Y" }}</td>
+                    <td>{{ location.create_at|date:"d/m/Y" }}</td>
+                    <td>
+                        {% if not location.dt_finished %}
+                        <a href="{% url 'location-finish' location.id %}" class="btn btn-sm btn-success">
+                            <i class="fas fa-flag-checkered me-1"></i> Encerrar
+                        </a>
+                        {% else %}
+                        <span class="badge bg-secondary">
+                            <i class="fas fa-check-circle me-1"></i> Encerrada
+                        </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">
+                        <i class="fas fa-inbox fa-2x mb-2"></i>
+                        <br>
+                        Nenhuma locação registrada ainda.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-file-signature fa-3x text-muted mb-3"></i>
+        <p class="text-muted">Nenhuma locação registrada ainda.</p>
+        <a href="{% url 'list-location' %}" class="btn btn-primary">
+            <i class="fas fa-handshake me-1"></i> Ir para Imóveis Disponíveis
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+{% include 'pagination.html' with page=locations %}
+{% endblock %}
+
