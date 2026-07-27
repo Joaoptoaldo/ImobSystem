@@ -1,5 +1,7 @@
 # Sistema de Gerenciamento de Aluguéis
 
+![Interface do sistema](docs/screenshots/relatorio.png)
+
 Aplicação web para gerenciamento de imóveis destinados à locação, com cadastro de clientes e imóveis, registro e encerramento de contratos de locação e consulta de relatórios.
 
 ## Funcionalidades
