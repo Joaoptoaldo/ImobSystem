@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Imóveis{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold mb-0">
+            <i class="fas fa-home text-primary me-2"></i> Imóveis Cadastrados
+        </h4>
+        <a href="{% url 'immobile-create' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Novo Imóvel
+        </a>
+    </div>
+
+    <!-- Filtro por tipo de imóvel (RF09) -->
+    <div class="row g-3 align-items-center mb-3 p-3 bg-light rounded">
+        <div class="col-auto">
+            <form action="{% url 'list-immobile' %}" method="GET">
+                <div class="d-flex align-items-center gap-2">
+                    <label class="fw-bold"><i class="fas fa-filter me-1"></i>Filtrar por Tipo:</label>
+                    <select name="type_item" class="form-select" onchange="this.form.submit()">
+                        <option value="">Todos</option>
+                        <option value="APARTAMENTO" {% if request.GET.type_item == 'APARTAMENTO' %}selected{% endif %}>Apartamento</option>
+                        <option value="KITNET" {% if request.GET.type_item == 'KITNET' %}selected{% endif %}>Kitnet</option>
+                        <option value="CASA" {% if request.GET.type_item == 'CASA' %}selected{% endif %}>Casa</option>
+                    </select>
+                    {% if request.GET.type_item %}
+                    <a href="{% url 'list-immobile' %}" class="btn btn-outline-danger" title="Limpar filtro">
+                        <i class="fas fa-times"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if immobiles %}
+    <div class="table-responsive">
+        <table class="table table-light table-striped table-hover table-bordered align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Código</th>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Endereço</th>
+                    <th scope="col">Valor</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for immobile in immobiles %}
+                <tr>
+                    <td scope="row">{{ immobile.id }}</td>
+                    <td>{{ immobile.code }}</td>
+                    <td><span class="badge bg-success">{{ immobile.type_item }}</span></td>
+                    <td>{{ immobile.address|truncatechars:50 }}</td>
+                    <td>R$ {{ immobile.price }}</td>
+                    <td>
+                        {% if immobile.is_locate %}
+                        <span class="badge bg-warning text-dark">Locado</span>
+                        {% else %}
+                        <span class="badge bg-success">Disponível</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'immobile-update' immobile.id %}" class="btn btn-sm btn-outline-primary" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'immobile-delete' immobile.id %}" class="btn btn-sm btn-outline-danger" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-home fa-3x text-muted mb-3"></i>
+        <p class="text-muted">Nenhum imóvel cadastrado ainda.</p>
+        <a href="{% url 'immobile-create' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Cadastrar Primeiro Imóvel
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+{% include 'pagination.html' with page=immobiles %}
+{% endblock %}
+
