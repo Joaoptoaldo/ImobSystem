@@ -97,7 +97,7 @@ A aplicação está pronta para deploy em plataformas como Heroku, Render ou Rai
 
 - **Procfile**: `web: gunicorn proj.wsgi --log-file -`
 - **Runtime**: Python 3.12.10 (`runtime.txt`)
-- **CI**: GitHub Actions executa os testes automaticamente a cada push ([`.github/workflows/tests.yml`](project/.github/workflows/tests.yml))
+- **CI**: GitHub Actions executa os testes automaticamente a cada push ([`.github/workflows/tests.yml`](.github/workflows/tests.yml))
 - **Comando release** (executado antes do deploy): `python manage.py collectstatic --noinput && python manage.py migrate`
 
 > Sem as variáveis `AWS_*` configuradas, as imagens de imóveis são salvas localmente e **não persistem** entre deploys na maioria das plataformas de hospedagem (Heroku, Render, Railway). Para persistência real, configure um bucket S3 (veja `.env.example`).

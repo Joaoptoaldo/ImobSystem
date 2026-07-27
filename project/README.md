@@ -44,7 +44,7 @@ A suíte tem **11 testes** automatizados na aplicação `locacao`.
 
 - **Procfile**: `web: gunicorn proj.wsgi --log-file -`
 - **Runtime**: Python 3.12.10 (`runtime.txt`)
-- **CI**: GitHub Actions ([`.github/workflows/tests.yml`](.github/workflows/tests.yml)) executa os testes a cada push
+- **CI**: GitHub Actions ([`.github/workflows/tests.yml`](../.github/workflows/tests.yml)) executa os testes a cada push
 - **Release**: `python manage.py collectstatic --noinput && python manage.py migrate`
 
 > Sem as variáveis `AWS_*` configuradas, as imagens são salvas localmente e **não persistem** entre deploys. Configure um bucket S3 para persistência real.
