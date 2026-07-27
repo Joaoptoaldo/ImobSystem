@@ -1,0 +1,9 @@
+.venv/
+venv
+.DS_Store
+*.pyc
+.env
+.env.local
+.vscode
+db.sqlite3
+static/
