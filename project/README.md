@@ -2,9 +2,22 @@
 
 A documentação completa e a visão geral do projeto estão no [README da raiz do repositório](../README.md).
 
-Abaixo, instruções específicas para quem vai rodar a aplicação Django localmente.
+## Arquitetura
 
-## Setup
+O app `locacao` segue uma separação em camadas:
+- **views** — recebem a requisição, validam o form e delegam a lógica
+- **forms** — validação de dados de entrada (Django Forms)
+- **services** (`locacao/services/`) — regras de negócio isoladas da camada web
+- **models** — persistência
+
+Essa separação mantém a lógica de negócio testável sem depender do ciclo
+request/response do Django.
+
+## Configuração
+
+Abaixo, instruções específicas para rodar a aplicação Django localmente.
+
+### Setup
 
 ```bash
 # 1. Ambiente virtual
@@ -32,7 +45,7 @@ python manage.py runserver
 
 Acesse [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
 
-## Testes
+### Testes
 
 ```bash
 python manage.py test
@@ -40,7 +53,7 @@ python manage.py test
 
 A suíte tem **11 testes** automatizados na aplicação `locacao`.
 
-## Deploy
+### Deploy
 
 - **Procfile**: `web: gunicorn proj.wsgi --log-file -`
 - **Runtime**: Python 3.12.10 (`runtime.txt`)
@@ -49,3 +62,12 @@ A suíte tem **11 testes** automatizados na aplicação `locacao`.
 
 > Sem as variáveis `AWS_*` configuradas, as imagens são salvas localmente e **não persistem** entre deploys. Configure um bucket S3 para persistência real.
 
+## Notas técnicas
+
+- O backend de staticfiles é condicionado a `DEBUG`: em desenvolvimento usa
+  `StaticFilesStorage` (sem manifesto), em produção usa
+  `CompressedManifestStaticFilesStorage` do WhiteNoise (exige
+  `collectstatic` antes do deploy — já incluído no comando de release).
+- Upload de imagens usa S3 se as variáveis `AWS_*` estiverem definidas,
+  senão cai para disco local (não persistente em produção — ver seção
+  Deploy).
